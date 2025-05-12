@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="user-panel">
+    <h2>Livros Disponíveis</h2>
+    
+    <div class="book-grid">
+        {% for livro in livros %}
+        <div class="book-card" data-id="{{ livro.id }}">
+            <h3>{{ livro.titulo }}</h3>
+            <p>Autor: {{ livro.autor }}</p>
+            <p>ISBN: {{ livro.isbn }}</p>
+            <button class="btn emprestar-btn">Emprestar</button>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div id="emprestimo-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Emprestar Livro</h3>
+            <form id="emprestimo-form">
+                <input type="hidden" id="livro-id">
+                <div class="form-group">
+                    <label for="usuario">Seu Nome:</label>
+                    <input type="text" id="usuario" required>
+                </div>
+                <button type="submit" class="btn">Confirmar Empréstimo</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

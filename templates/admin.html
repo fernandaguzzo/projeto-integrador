@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="admin-panel">
+    <h2>Painel da Bibliotecária</h2>
+    
+    <div class="add-book">
+        <h3>Adicionar Novo Livro</h3>
+        <form method="POST">
+            <div class="form-group">
+                <label for="titulo">Título:</label>
+                <input type="text" id="titulo" name="titulo" required>
+            </div>
+            <div class="form-group">
+                <label for="autor">Autor:</label>
+                <input type="text" id="autor" name="autor" required>
+            </div>
+            <div class="form-group">
+                <label for="isbn">ISBN:</label>
+                <input type="text" id="isbn" name="isbn" required>
+            </div>
+            <button type="submit" class="btn">Adicionar Livro</button>
+        </form>
+    </div>
+    
+    <div class="book-list">
+        <h3>Livros Cadastrados</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>ISBN</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for livro in livros %}
+                <tr>
+                    <td>{{ livro.id }}</td>
+                    <td>{{ livro.titulo }}</td>
+                    <td>{{ livro.autor }}</td>
+                    <td>{{ livro.isbn }}</td>
+                    <td>{{ 'Disponível' if livro.disponivel else 'Emprestado' }}</td>
+                    <td>
+                        {% if not livro.disponivel %}
+                        <a href="{{ url_for('devolver', livro_id=livro.id) }}" class="btn btn-small">Devolver</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

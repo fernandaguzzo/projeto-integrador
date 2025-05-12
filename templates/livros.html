@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="all-books">
+    <h2>Todos os Livros</h2>
+    
+    <div class="filters">
+        <label for="disponivel">Mostrar:</label>
+        <select id="disponivel">
+            <option value="all">Todos</option>
+            <option value="available">Disponíveis</option>
+            <option value="unavailable">Emprestados</option>
+        </select>
+    </div>
+    
+    <div class="book-list">
+        {% for livro in livros %}
+        <div class="book-item" data-available="{{ 'true' if livro.disponivel else 'false' }}">
+            <h3>{{ livro.titulo }}</h3>
+            <p><strong>Autor:</strong> {{ livro.autor }}</p>
+            <p><strong>ISBN:</strong> {{ livro.isbn }}</p>
+            <p class="status {{ 'available' if livro.disponivel else 'unavailable' }}">
+                {{ 'Disponível' if livro.disponivel else 'Emprestado' }}
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
