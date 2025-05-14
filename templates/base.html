@@ -1,22 +1,23 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biblioteca Digital</title>
+    <title>Biblioteca</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <header>
-        <h1>Biblioteca Digital</h1>
+        <h1>Sistema Biblioteca</h1>
         <nav>
-            <a href="{{ url_for('index') }}">Início</a>
-            <a href="{{ url_for('admin') }}">Admin</a>
-            <a href="{{ url_for('user') }}">Usuário</a>
-            <a href="{{ url_for('livros') }}">Livros</a>
+            {% if 'user_id' in session %}
+                <a href="{{ url_for('logout') }}">Sair</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>  
+            {% endif %}
         </nav>
     </header>
-    
+
     <main>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -25,10 +26,10 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-        
+
         {% block content %}{% endblock %}
     </main>
-    
+
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

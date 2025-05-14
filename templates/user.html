@@ -1,33 +1,53 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="user-panel">
-    <h2>Livros Disponíveis</h2>
-    
-    <div class="book-grid">
+<section class="user-section">
+    <h2>Área do Usuário</h2>
+
+    <h3>Livros Disponíveis</h3>
+    <div class="livros-grid">
         {% for livro in livros %}
-        <div class="book-card" data-id="{{ livro.id }}">
-            <h3>{{ livro.titulo }}</h3>
-            <p>Autor: {{ livro.autor }}</p>
-            <p>ISBN: {{ livro.isbn }}</p>
-            <button class="btn emprestar-btn">Emprestar</button>
+        <div class="livro-card">
+            {% if livro.capa %}
+            <img src="{{ url_for('static', filename='capas/' + livro.capa) }}" alt="{{ livro.titulo }}">
+            {% endif %}
+            <h4>{{ livro.titulo }}</h4>
+            <p>{{ livro.autor }}</p>
+            <a href="{{ url_for('emprestar', livro_id=livro.id) }}" class="btn">Emprestar</a>
         </div>
         {% endfor %}
     </div>
-    
-    <div id="emprestimo-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3>Emprestar Livro</h3>
-            <form id="emprestimo-form">
-                <input type="hidden" id="livro-id">
-                <div class="form-group">
-                    <label for="usuario">Seu Nome:</label>
-                    <input type="text" id="usuario" required>
-                </div>
-                <button type="submit" class="btn">Confirmar Empréstimo</button>
-            </form>
-        </div>
-    </div>
+
+    <h3>Meus Empréstimos</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Livro</th>
+                <th>Data Empréstimo</th>
+                <th>Data Devolução</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emprestimo in emprestimos %}
+            <tr>
+                <td>{{ emprestimo.livro.titulo }}</td>
+                <td>{{ emprestimo.data_emprestimo.strftime('%d/%m/%Y') }}</td>
+                <td class="{% if emprestimo.data_devolucao and emprestimo.data_devolucao < datetime.now() %}atrasado{% endif %}">
+                    {{ emprestimo.data_devolucao.strftime('%d/%m/%Y') if emprestimo.data_devolucao else 'Pendente' }}
+                </td>
+                <td>
+                    {% if not emprestimo.data_devolucao %}
+                    <a href="{{ url_for('devolver', emprestimo_id=emprestimo.id) }}" class="btn">Devolver</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4">Nenhum empréstimo ativo</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </section>
 {% endblock %}

@@ -1,58 +1,51 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="admin-panel">
-    <h2>Painel da Bibliotecária</h2>
+<section class="admin-section">
+    <h2>Painel do Administrador</h2>
     
-    <div class="add-book">
-        <h3>Adicionar Novo Livro</h3>
-        <form method="POST">
-            <div class="form-group">
-                <label for="titulo">Título:</label>
-                <input type="text" id="titulo" name="titulo" required>
-            </div>
-            <div class="form-group">
-                <label for="autor">Autor:</label>
-                <input type="text" id="autor" name="autor" required>
-            </div>
-            <div class="form-group">
-                <label for="isbn">ISBN:</label>
-                <input type="text" id="isbn" name="isbn" required>
-            </div>
-            <button type="submit" class="btn">Adicionar Livro</button>
-        </form>
+    <div class="actions">
+        <a href="{{ url_for('adicionar_livro') }}" class="btn">Adicionar Livro</a>
     </div>
-    
-    <div class="book-list">
-        <h3>Livros Cadastrados</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Título</th>
-                    <th>Autor</th>
-                    <th>ISBN</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for livro in livros %}
-                <tr>
-                    <td>{{ livro.id }}</td>
-                    <td>{{ livro.titulo }}</td>
-                    <td>{{ livro.autor }}</td>
-                    <td>{{ livro.isbn }}</td>
-                    <td>{{ 'Disponível' if livro.disponivel else 'Emprestado' }}</td>
-                    <td>
-                        {% if not livro.disponivel %}
-                        <a href="{{ url_for('devolver', livro_id=livro.id) }}" class="btn btn-small">Devolver</a>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+
+    <h3>Livros Cadastrados</h3>
+    <div class="livros-grid">
+        {% for livro in livros %}
+        <div class="livro-card">
+            {% if livro.capa %}
+            <img src="{{ url_for('static', filename='capas/' + livro.capa) }}" alt="{{ livro.titulo }}">
+            {% endif %}
+            <h4>{{ livro.titulo }}</h4>
+            <p>{{ livro.autor }}</p>
+            <p class="status {{ 'disponivel' if livro.disponivel else 'emprestado' }}">
+                {{ 'Disponível' if livro.disponivel else 'Emprestado' }}
+            </p>
+        </div>
+        {% endfor %}
     </div>
+
+    <h3>Empréstimos Ativos</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Livro</th>
+                <th>Usuário</th>
+                <th>Data Empréstimo</th>
+                <th>Data Devolução</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in emprestimos %}
+            <tr>
+                <td>{{ emp.livro.titulo }}</td>
+                <td>{{ emp.usuario.username }}</td>
+                <td>{{ emp.data_emprestimo.strftime('%d/%m/%Y') }}</td>
+                <td class="{{ 'atrasado' if emp.data_devolucao < datetime.now() else '' }}">
+                    {{ emp.data_devolucao.strftime('%d/%m/%Y') }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </section>
 {% endblock %}
